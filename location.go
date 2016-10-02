@@ -13,6 +13,8 @@
 // limitations under the License.
 package cdw
 
+import "strings"
+
 // Location is the structure for holding distinct locations
 type Location struct {
 	LocationCode string
@@ -25,27 +27,27 @@ type ByLocation []Location
 
 func (a ByLocation) Len() int      { return len(a) }
 func (a ByLocation) Swap(i, j int) { a[i], a[j] = a[j], a[i] }
-func (a ByLocation) Less(i, j int) bool { 
+func (a ByLocation) Less(i, j int) bool {
 	if a[i].LocationCode < a[j].LocationCode {
 		return true
 	}
-	
+
 	if a[i].LocationCode > a[j].LocationCode {
 		return false
 	}
-	
+
 	if a[i].Room < a[j].Room {
 		return true
 	}
-	
+
 	if a[i].Room > a[j].Room {
 		return false
 	}
-	
+
 	if a[i].Bed < a[j].Bed {
 		return true
 	}
-	
+
 	return false
 }
 
@@ -58,3 +60,22 @@ func (l *Location) ToCSVRecord() (record []string) {
 	return
 }
 
+// FromFlowsheetCSVRecord parses the location field in flowsheet data
+func (l *Location) FromFlowsheetCSVRecord(record string) {
+	var locationstrings = strings.Split(record, "-")
+	if locationstrings[0] == "" {
+		return
+	}
+
+	l.LocationCode = locationstrings[0]
+
+	if len(locationstrings) > 1 {
+		l.Room = locationstrings[1]
+	}
+
+	if len(locationstrings) > 2 {
+		l.Bed = locationstrings[2]
+	}
+
+	return
+}
