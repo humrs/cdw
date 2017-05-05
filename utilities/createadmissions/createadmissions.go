@@ -18,7 +18,8 @@ import (
 	"io"
 	"log"
 	"os"
-	"github.com/humrs/cdw"
+
+	"github.com/rstanleyhum/cdw"
 )
 
 // createadmissions creates an executable which you can pipe a csv file and outputs a csv file
@@ -31,19 +32,20 @@ import (
 //
 func main() {
 	log.SetOutput(os.Stderr)
-	
+
 	fp := os.Stdin
 	outfp := os.Stdout
-	
-	chonyStays := make(map[cdw.UniquePatientID] *cdw.HospitalAdmit)
-	
+
+	chonyStays := make(map[cdw.UniquePatientID]*cdw.HospitalAdmit)
+
 	hospitalTracker := cdw.NewTracker()
-	
+
 	r := csv.NewReader(fp)
+	r.Comma = '|'
 	firstRow := true
-    
+
 	csvWriter := csv.NewWriter(outfp)
-	
+
 	for {
 		record, err := r.Read()
 		if err == io.EOF {
@@ -68,8 +70,8 @@ func main() {
 			}
 			chonyStays[admission.AdmitEvent.UniquePatientID].AddAdmit(admission)
 		}
-	}	
-		
+	}
+
 	for k := range chonyStays {
 		if !chonyStays[k].HasPICUAdmit {
 			continue
@@ -78,9 +80,9 @@ func main() {
 			log.Fatal(err)
 		}
 	}
-	
+
 	csvWriter.Flush()
-		
+
 	if err := csvWriter.Error(); err != nil {
 		log.Fatal(err)
 	}

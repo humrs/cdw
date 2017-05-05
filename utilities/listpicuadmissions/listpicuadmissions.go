@@ -15,11 +15,12 @@ package main
 
 import (
 	"encoding/csv"
+	"fmt"
 	"io"
 	"log"
 	"os"
-	"github.com/humrs/cdw"
-	"fmt"
+
+	"github.com/rstanleyhum/cdw"
 )
 
 // listpicuadmissions takes a csv file and outputs a csv file
@@ -29,18 +30,20 @@ import (
 //
 func main() {
 	log.SetOutput(os.Stderr)
-	
+
 	fp := os.Stdin
-	
-	chonyStays := make(map[cdw.UniquePatientID] *cdw.HospitalAdmit)
-	
+
+	chonyStays := make(map[cdw.UniquePatientID]*cdw.HospitalAdmit)
+
 	hospitalTracker := cdw.NewTracker()
-	
+
 	r := csv.NewReader(fp)
+	r.Comma = '|'
 	firstRow := true
-    
+
 	for {
 		record, err := r.Read()
+
 		if err == io.EOF {
 			break
 		}
@@ -65,15 +68,14 @@ func main() {
 		}
 	}
 
-		
 	for k := range chonyStays {
 		if !chonyStays[k].HasPICUAdmit {
 			continue
 		}
 		admits := chonyStays[k].GetPICUAdmits()
 		for _, v := range admits {
-			fmt.Printf("%v, %v, %v, %v, %v\n", v.DischargeTime, v.Account, v.PatientID, v.Location, v.DischargeTime.Sub(v.AdmitTime))
+			fmt.Printf("%v, %v, %v, %v, %v\n", v.DischargeTime, v.Account, v.PatientID, v.Location, v.DischargeTime.Sub(v.AdmitTime).Hours())
 		}
 	}
-	
+
 }

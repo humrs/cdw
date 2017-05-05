@@ -14,16 +14,16 @@
 package cdw
 
 import (
-    "time"
-    "log"
-    "strconv"
+	"log"
+	"strconv"
+	"time"
 )
 
 // Event holds the information for a ADT event
 type Event struct {
 	UniquePatientID
-    PrimaryTime        time.Time
-	EventCode          int
+	PrimaryTime time.Time
+	EventCode   int
 	Location
 	MedicalServiceCode string
 	ProviderID         string
@@ -41,55 +41,55 @@ func (a ByPrimaryTime) Less(i, j int) bool { return a[i].PrimaryTime.Before(a[j]
 
 // FromCSVRecord is a function which loads an event from a CSV record
 func (e *Event) FromCSVRecord(record []string) {
-    var err error
-    
-    if len(record) != 12 {
-        log.Fatalf("Problem with Record Length\n")
-    }
-    
-    e.Account, err = strconv.Atoi(record[0])
-    if err != nil {
-        log.Fatalf("Account: %v", err)
-    }
-    e.PatientID, err = strconv.Atoi(record[1])
-    if err != nil {
-        log.Fatalf("PatientID: %v", err)
-    }
-    e.PrimaryTime, err = time.Parse(Timeformat, record[2])
-    if err != nil {
-        log.Fatalf("Time: %v", err)
-    }
-    e.EventCode, err = strconv.Atoi(record[3])
-    if err != nil {
-        log.Fatalf("EventCode: %v", err)
-    }
-    e.LocationCode = record[4]
-    e.Room = record[5]
-    e.Bed = record[6]
-    e.MedicalServiceCode = record[7]
-    e.ProviderID = record[8]
-    e.SequenceNo = record[9]
-    e.AlternateID = record[10]
-    e.SqNum, err = strconv.Atoi(record[11])
-    if err != nil {
-        log.Fatalf("SQ Num: %v", err)
-    }
+	var err error
+
+	if len(record) != 12 {
+		log.Fatalf("Problem with Record Length\n")
+	}
+
+	e.Account, err = strconv.Atoi(record[0])
+	if err != nil {
+		log.Fatalf("Account: %v", err)
+	}
+	e.PatientID, err = strconv.Atoi(record[1])
+	if err != nil {
+		log.Fatalf("PatientID: %v", err)
+	}
+	e.PrimaryTime, err = time.Parse(Timeformat, record[2])
+	if err != nil {
+		log.Fatalf("Time: %v", err)
+	}
+	e.EventCode, err = strconv.Atoi(record[3])
+	if err != nil {
+		log.Fatalf("EventCode: %v", err)
+	}
+	e.LocationCode = record[4]
+	e.Room = record[5]
+	e.Bed = record[6]
+	e.MedicalServiceCode = record[7]
+	e.ProviderID = record[8]
+	e.SequenceNo = record[9]
+	e.AlternateID = record[10]
+	e.SqNum, err = strconv.Atoi(record[11])
+	if err != nil {
+		log.Fatalf("SQ Num: %v", err)
+	}
 }
 
 // ToCSVRecord converts back to CSV record
 func (e *Event) ToCSVRecord() (record []string) {
-    record = append(record,
-        strconv.Itoa(e.Account),
-        strconv.Itoa(e.PatientID),
-        e.PrimaryTime.Format(Timeformat),
+	record = append(record,
+		strconv.Itoa(e.Account),
+		strconv.Itoa(e.PatientID),
+		e.PrimaryTime.Format(Timeformat),
 		strconv.Itoa(e.EventCode),
-        e.LocationCode,
-        e.Room,
-        e.Bed,
-        e.MedicalServiceCode,
-        e.ProviderID,
-        e.SequenceNo,
+		e.LocationCode,
+		e.Room,
+		e.Bed,
+		e.MedicalServiceCode,
+		e.ProviderID,
+		e.SequenceNo,
 		e.AlternateID,
-        strconv.Itoa(e.SqNum))
-    return
+		strconv.Itoa(e.SqNum))
+	return
 }
